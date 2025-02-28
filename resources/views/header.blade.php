@@ -4,8 +4,8 @@
         <div>
             <nav class="flex justify-center">
                 <ul class="flex justify-center space-x-4">
-                    <li><a href="{{ url('/calculator') }}">Calculator</a></li>
-                    <li><a href="{{ url('/history') }}">History</a></li>
+                    <li><a href="{{ route('calculator') }}">Calculator</a></li>
+                    <li><a href="{{ route('history') }}">History</a></li>
                 </ul>
             </nav>
         </div>

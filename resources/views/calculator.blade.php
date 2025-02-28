@@ -6,8 +6,9 @@
     <div class="bg-white p-8 rounded shadow-md w-96">
         <h1 class="text-2xl font-bold mb-4 text-center">Calculator</h1>
         <form id="calculator-form">
-            <div class="mb-4">
-                <input type="text" id="display" class="w-full p-2 border rounded text-right" readonly>
+            <div class="mb-4 border rounded">
+                <input type="text" id="displayOperation" name="expression" class="w-full text-right" readonly>
+                <input type="text" id="displayResult" name="result" class="w-full p-2 text-right" readonly>
             </div>
             <div class="grid grid-cols-4 gap-2">
                 <button type="button" class="bg-gray-200 p-4 rounded" onclick="appendNumber('7')">7</button>
@@ -32,9 +33,11 @@
     </div>
 
     <script>
-        let display = document.getElementById('display');
+        let display = document.getElementById('displayResult');
+        let operationDisplay = document.getElementById('displayOperation');
         let currentOperation = null;
         let firstOperand = null;
+        let calculateRoute = "{{ route('calculate') }}";
 
         function appendNumber(number) {
             display.value += number;
@@ -43,35 +46,40 @@
         function setOperation(operation) {
             firstOperand = parseFloat(display.value);
             currentOperation = operation;
+            operationDisplay.value += firstOperand + ' ' + operation + ' ';
             display.value = '';
         }
 
         function calculateResult() {
-            let secondOperand = parseFloat(display.value);
-            let result;
-            switch (currentOperation) {
-                case '+':
-                    result = firstOperand + secondOperand;
-                    break;
-                case '-':
-                    result = firstOperand - secondOperand;
-                    break;
-                case '*':
-                    result = firstOperand * secondOperand;
-                    break;
-                case '/':
-                    result = firstOperand / secondOperand;
-                    break;
-                default:
-                    return;
+            if (!isNaN(operationDisplay)) {
+                fetch(calculateRoute, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        expression: operationDisplay.value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        display.value = data.result;
+                        operationDisplay.value += secondOperand + ' = ';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             }
-            display.value = result;
             currentOperation = null;
             firstOperand = null;
         }
 
         function clearDisplay() {
             display.value = '';
+            operationDisplay.value = '';
             currentOperation = null;
             firstOperand = null;
         }

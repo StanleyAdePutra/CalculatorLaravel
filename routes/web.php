@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\calculatorController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -10,10 +11,8 @@ Route::get('/', function () {
     return view('login');
 });
 
-Route::get('/calculator', function () {
-    return view('calculator');
-});
+Route::get('/calculator', [calculatorController::class, 'index'])->name('calculator');
 
-Route::get('/history', function () {
-    return view('history');
-});
+Route::get('/history', [calculatorController::class, 'history'])->name('history');
+
+Route::post('/api/calculate', [calculatorController::class, 'calculate'])->name('calculate');

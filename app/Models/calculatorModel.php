@@ -8,5 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class calculatorModel extends Model
 {
     use HasFactory;
-    protected $fillable = ['num1', 'num2', 'operator', 'result'];
+    protected $table = 'calculator_history';
+    protected $fillable = ['expression', 'result'];
 }
